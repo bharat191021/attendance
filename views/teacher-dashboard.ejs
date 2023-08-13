@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="/styles.css">
+    <title>Teacher Dashboard</title>
+</head>
+<body>
+    <h1>Welcome <%= user.username %> to the Teacher Dashboard</h1>
+    
+    <!-- Teacher-specific content -->
+    <h2>Your Classes</h2>
+    <ul>
+        <li>Class 1 - Math</li>
+        <li>Class 2 - Science</li>
+        <li>Class 3 - English</li>
+    </ul>
+
+    <h2>Upcoming Events</h2>
+    <ul>
+        <li>Event 1 - Math Workshop (August 15, 2023)</li>
+        <li>Event 2 - Science Fair (September 5, 2023)</li>
+        <li>Event 3 - English Poetry Contest (October 10, 2023)</li>
+    </ul>
+
+    <h2>Generate Attendance Report</h2>
+    <form action="/generate_report" method="post">
+        <label for="student">Select a Student:</label>
+        <select name="student" id="student">
+            <% students.forEach(student => { %>
+                <option value="<%= student._id %>"><%= student.username %></option>
+            <% }); %>
+        </select>
+        <label for="startDate">Start Date:</label>
+        <input type="date" id="startDate" name="startDate">
+        <label for="endDate">End Date:</label>
+        <input type="date" id="endDate" name="endDate">
+        <button type="submit">Generate Report</button>
+    </form>
+
+    <!-- Display the full attendance record here -->
+    <% if (attendanceReport && attendanceReport.studentName) { %>
+        <h2>Full Attendance Record for <%= attendanceReport.studentName %></h2>
+        <ul>
+            <% attendanceReport.attendanceRecords.forEach(record => { %>
+                <li><%= record.timestamp %> - <%= record.eventType %></li>
+            <% }); %>
+        </ul>
+    <% } else { %>
+        <p>No attendance record available.</p>
+    <% } %>
+
+    <!-- Teacher Dashboard content -->
+<h2>Create New Student</h2>
+<form id="create-student-form">
+    <label for="newStudentUsername">Username:</label>
+    <input type="text" id="newStudentUsername" name="newStudentUsername" required>
+    <label for="newStudentPassword">Password:</label>
+    <input type="password" id="newStudentPassword" name="newStudentPassword" required>
+    <button type="button" id="createStudentButton">Create Student</button>
+</form>
+
+
+
+
+    <a href="/logout">Logout</a>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+          const createStudentForm = document.getElementById('create-student-form');
+          const createStudentButton = document.getElementById('createStudentButton');
+        
+          createStudentButton.addEventListener('click', async () => {
+            const newStudentUsername = document.getElementById('newStudentUsername').value;
+            const newStudentPassword = document.getElementById('newStudentPassword').value;
+        
+            try {
+              const response = await fetch('/create_student', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  username: newStudentUsername,
+                  password: newStudentPassword,
+                }),
+              });
+        
+              if (response.ok) {
+                alert('Student created successfully');
+                // Optionally, you can update the student list or perform other actions
+              } else {
+                alert('Error creating student');
+              }
+            } catch (error) {
+              console.error('Error creating student:', error);
+            }
+          });
+        });
+        </script>
+</body>
+</html>
+

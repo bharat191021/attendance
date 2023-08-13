@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="/styles.css">
+  <title>Dashboard - Attendance Tracker</title>
+</head>
+<body>
+  <a href="/logout">Logout</a>
+  <h1>Welcome, <%= user.username %>!</h1>
+  <h2>Record Attendance</h2>
+  <!-- Use separate forms for Punch In, Start Break, Finish Break, and Punch Out -->
+  <form id="punch-in-form" method="post" action="/punch_in">
+    <input type="submit" value="Punch In">
+  </form>
+  <form id="start-break-form" method="post" action="/start_break">
+    <input type="submit" value="Start Break">
+  </form>
+  <form id="finish-break-form" method="post" action="/finish_break">
+    <input type="submit" value="Finish Break">
+  </form>
+  <form id="punch-out-form" method="post" action="/punch_out">
+    <input type="submit" value="Punch Out">
+  </form>
+  
+  <h2>Attendance Records</h2>
+  <ul>
+    <% attendanceRecords.forEach(record => { %>
+      <li><%= record.timestamp %> - <%= record.punchType %></li>
+    <% }); %>
+  </ul>
+  
+  <div id="punch-info" style="display: none;">
+    <h2>Punch Info</h2>
+    <ul id="punch-list"></ul>
+  </div>
+  
+  <script>
+    const punchInForm = document.getElementById('punch-in-form');
+    const startBreakForm = document.getElementById('start-break-form');
+    const finishBreakForm = document.getElementById('finish-break-form');
+    const punchOutForm = document.getElementById('punch-out-form');
+    const punchInfo = document.getElementById('punch-info');
+    const punchList = document.getElementById('punch-list');
+    
+    punchInForm.addEventListener('submit', function(event) {
+      event.preventDefault();
+      recordPunch('Punch In');
+    });
+    
+    startBreakForm.addEventListener('submit', function(event) {
+      event.preventDefault();
+      recordPunch('Start Break');
+    });
+    
+    finishBreakForm.addEventListener('submit', function(event) {
+      event.preventDefault();
+      recordPunch('Finish Break');
+    });
+    
+    punchOutForm.addEventListener('submit', function(event) {
+      event.preventDefault();
+      recordPunch('Punch Out');
+    });
+    
+    function recordPunch(punchType) {
+      const now = new Date();
+      const formattedTime = now.toLocaleTimeString();
+      const formattedDate = now.toLocaleDateString();
+      const punchItem = document.createElement('li');
+      punchItem.textContent = `${punchType} - Time: ${formattedTime}, Date: ${formattedDate}`;
+      punchList.appendChild(punchItem);
+      punchInfo.style.display = 'block';
+    }
+  </script>
+</body>
+</html>
+
+
+
+
+
